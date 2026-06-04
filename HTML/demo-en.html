@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Try the functional GameBack prototype directly in your browser.">
+  <title>Demo · GameBack</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .demo-frame-wrap { background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2rem; }
+    .demo-frame-inner { max-width:1100px;margin:0 auto; }
+    .demo-frame-inner h2 { font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.8rem; }
+    .demo-frame-inner h2 span { color:var(--accent); }
+    .app-frame { width:100%;height:85vh;min-height:600px;border:1px solid var(--border);border-radius:8px;background:var(--bg);overflow:hidden; }
+    .notice { background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.25);border-radius:6px;padding:.8rem 1.2rem;color:var(--muted);font-size:.88rem;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem; }
+    .notice strong { color:var(--accent); }
+  </style>
+</head>
+<body>
+<header>
+  <a href="index-en.html" class="logo">GAME<span>BACK</span></a>
+  <nav aria-label="Main navigation">
+    <a href="index-en.html" class="nav-link">Home</a>
+    <a href="features-en.html" class="nav-link">Features</a>
+    <a href="demo-en.html" class="nav-link active">Demo</a>
+    <a href="contact-en.html" class="nav-link">Contact</a>
+  </nav>
+  <div class="header-right">
+    <a href="demo-es.html" class="lang-btn">ES</a>
+    <a href="demo-en.html" class="lang-btn current">EN</a>
+    <a href="contact-en.html" class="btn-primary">Contact</a>
+  </div>
+</header>
+<main>
+<section class="hero" style="padding:3rem 2rem 2rem" aria-label="Interactive demo">
+  <div class="hero-tag">◈ Prototype v1.0 · Interactive</div>
+  <h1><em>GAMEBACK</em> LIVE</h1>
+  <p>Explore the full functional prototype. Search games, read reviews, write your own and add new titles to the catalogue.</p>
+</section>
+<div class="demo-frame-wrap">
+  <div class="demo-frame-inner">
+    <div class="notice" role="note">
+      <span aria-hidden="true">ℹ️</span>
+      <span><strong>Note:</strong> This is the complete application running in your browser. Data is stored in memory for the session. Use the header buttons to navigate between sections.</span>
+    </div>
+    <h2>◈ <span>GAMEBACK</span> · Functional Prototype</h2>
+    <iframe src="gameback-app.html" class="app-frame" title="GameBack interactive prototype" aria-label="GameBack app: video game review platform" loading="lazy"></iframe>
+  </div>
+</div>
+<section class="section" aria-labelledby="instructions-title">
+  <div class="section-tag">Quick guide</div>
+  <h2 class="section-title" id="instructions-title">HOW TO USE <em>THE DEMO</em></h2>
+  <div class="features-grid">
+    <div class="feat-card"><div class="feat-icon">📚</div><div class="feat-title">Browse the catalogue</div><p class="feat-desc">Go to the "Catalogue" section and use the search bar or genre buttons to filter available games.</p></div>
+    <div class="feat-card"><div class="feat-icon">🎮</div><div class="feat-title">View a game profile</div><p class="feat-desc">Click any game card to see its full profile with Metacritic score, platforms and reviews.</p></div>
+    <div class="feat-card"><div class="feat-icon">✍️</div><div class="feat-title">Write a review</div><p class="feat-desc">From a game profile or the "Reviews" menu, click "Write Review", choose stars and write your opinion.</p></div>
+    <div class="feat-card"><div class="feat-icon">➕</div><div class="feat-title">Add a game</div><p class="feat-desc">Click the "+ Add Game" button in the app header to add a new title to the catalogue with all its details.</p></div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="logo">GAME<span>BACK</span></div><p>Video game review platform made by and for the gaming community.</p></div>
+    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="index-en.html">Home</a></li><li><a href="features-en.html">Features</a></li><li><a href="demo-en.html">Demo</a></li><li><a href="contact-en.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Language</h4><ul><li><a href="demo-es.html">🇪🇸 Español</a></li><li><a href="demo-en.html">🇬🇧 English</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 GameBack · Educational project</span><span>Built with pure HTML, CSS &amp; JS</span></div>
+</footer>
+</body>
+</html>

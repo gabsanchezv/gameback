@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameBack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #00f5a0;
+    --accent2: #7b2fff;
+    --accent3: #ff3d6e;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,245,160,0.012) 2px,
+      rgba(0,245,160,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,245,160,0.5);
+  }
+  .logo span { color: var(--accent3); }
+
+  nav { display: flex; gap: 0.5rem; }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    color: var(--accent);
+    background: rgba(0,245,160,0.08);
+  }
+
+  .header-actions { display: flex; gap: 0.8rem; align-items: center; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    background: #00c97e;
+    box-shadow: 0 0 20px rgba(0,245,160,0.4);
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(123,47,255,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.8rem;
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1;
+    letter-spacing: 6px;
+    animation: fadeDown 0.5s 0.1s ease both;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+
+  .hero p {
+    margin: 1.5rem auto;
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    animation: fadeDown 0.5s 0.2s ease both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeDown 0.5s 0.3s ease both;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 1.2rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── SEARCH BAR ── */
+  .search-section {
+    max-width: 700px;
+    margin: 3rem auto 2rem;
+    padding: 0 1rem;
+    animation: fadeDown 0.5s 0.4s ease both;
+  }
+
+  .search-wrap {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .search-wrap input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── GAMES GRID ── */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+  .section-title span { color: var(--accent); }
+
+  .filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .filter-tab {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.25rem 0.8rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .filter-tab:hover, .filter-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,245,160,0.07);
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .game-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0,245,160,0.12);
+  }
+
+  .game-cover {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .game-card:hover .game-cover-img { transform: scale(1.05); }
+
+  .game-cover-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+  }
+
+  .score-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: 2px solid;
+  }
+  .score-green { background: rgba(0,200,80,0.9); border-color: #00c850; color: #fff; }
+  .score-yellow { background: rgba(200,180,0,0.9); border-color: #c8b400; color: #fff; }
+  .score-red { background: rgba(200,50,50,0.9); border-color: #c83232; color: #fff; }
+
+  .platform-badges {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    display: flex;
+    gap: 4px;
+  }
+  .platform-badge {
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-family: 'Share Tech Mono', monospace;
+    color: #ccc;
+    letter-spacing: 1px;
+  }
+
+  .game-info { padding: 1rem; }
+  .game-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .game-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .game-genre {
+    background: rgba(123,47,255,0.15);
+    border: 1px solid rgba(123,47,255,0.3);
+    color: #a78bfa;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  .user-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+  }
+  .stars { color: var(--gold); letter-spacing: -2px; }
+  .review-count { color: var(--muted); }
+
+  /* ── GAME DETAIL ── */
+  #game-detail { padding: 2rem; max-width: 1000px; margin: 0 auto; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.4rem 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .detail-hero {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: start;
+  }
+
+  .detail-cover {
+    height: 280px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+  }
+
+  .detail-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-scores {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+  .score-block {
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+  }
+  .score-block .score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+  .score-block .score-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .score-meta { color: #00c850; }
+  .score-users { color: var(--gold); }
+
+  .detail-platforms { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+  .detail-platform {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .detail-desc { color: var(--muted); line-height: 1.7; font-size: 1rem; margin: 1rem 0; }
+
+  /* ── REVIEWS ── */
+  .reviews-section { margin-top: 2rem; }
+
+  .review-form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .review-form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+
+  .star-picker { display: flex; gap: 0.4rem; margin-bottom: 1rem; cursor: pointer; }
+  .star-pick {
+    font-size: 1.8rem;
+    transition: transform 0.1s;
+    color: var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .star-pick.active { color: var(--gold); }
+  .star-pick:hover { transform: scale(1.2); }
+
+  .reviews-list { display: flex; flex-direction: column; gap: 1rem; }
+
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    animation: fadeUp 0.3s ease both;
+  }
+  .review-card:hover { border-color: rgba(0,245,160,0.3); }
+
+  .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+  .review-author {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .review-date { color: var(--muted); font-size: 0.8rem; }
+  .review-text { color: var(--muted); line-height: 1.6; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 480px;
+    animation: fadeUp 0.2s ease both;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--accent3); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    z-index: 300;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .detail-hero { grid-template-columns: 1fr; }
+    .detail-cover { height: 200px; }
+    .stats-bar { gap: 1.5rem; }
+    header { padding: 0 1rem; }
+    .logo { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">GAME<span>BACK</span></div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('home')">Inicio</button>
+    <button class="nav-btn" onclick="showPage('catalog')">Catálogo</button>
+    <button class="nav-btn" onclick="showPage('reviews-page')">Reseñas</button>
+  </nav>
+  <div class="header-actions">
+    <button class="btn-primary" onclick="openModal('add-game-modal')">+ Añadir Juego</button>
+  </div>
+</header>
+
+<!-- ───────────── PAGE: HOME ───────────── -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">◈ PLATAFORMA DE RESEÑAS</div>
+    <h1>LA VOZ DE <em>LOS GAMERS</em></h1>
+    <p>Descubre, evalúa y comparte tu experiencia con los mejores videojuegos del mercado. Datos reales de jugadores reales.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="showPage('catalog')">Explorar Catálogo</button>
+      <button class="btn-ghost" onclick="openModal('add-review-modal')">Escribir Reseña</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num" id="stat-games">0</div>
+      <div class="stat-label">Juegos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-reviews">0</div>
+      <div class="stat-label">Reseñas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-platforms">5</div>
+      <div class="stat-label">Plataformas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-users">0</div>
+      <div class="stat-label">Usuarios</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🔥 <span>Tendencias</span></div>
+    </div>
+    <div class="games-grid" id="trending-grid"></div>
+  </div>
+</div>
+
+<!-- ───────────── PAGE: CATALOG ───────────── -->
+<div id="catalog" class="page">
+  <div class="search-section">
+    <div class="search-wrap">
+      <input type="text" id="search-input" placeholder="🔍  Buscar juegos..." oninput="filterGames()">
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Catálogo</div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter(this, 'all')">Todos</button>
+        <button class="filter-tab" onclick="setFilter(this, 'RPG')">RPG</button>
+        <button class="filter-tab" onclick="setFilter(this, 'Acción')">Acción</button>
+        <button class="filter-tab" onclick="setFilter(this, 'Aventura')">Aventura</button>
+        <button class="filter-tab" onclick="setFilter(this, 'Estrategia')">Estrategia</button>
+        <button class="filter-tab" onclick="setFilter(this, 'Deportes')">Deportes</button>
+      </div>
+    </div>
+    <div class="games-grid" id="catalog-grid"></div>
+  </div>
+</div>
+
+<!-- ───────────── PAGE: GAME DETAIL ───────────── -->
+<div id="game-detail-page" class="page">
+  <div id="game-detail"></div>
+</div>
+
+<!-- ───────────── PAGE: REVIEWS ───────────── -->
+<div id="reviews-page" class="page">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📝 Últimas <span>Reseñas</span></div>
+      <button class="btn-primary" onclick="openModal('add-review-modal')">+ Escribir Reseña</button>
+    </div>
+    <div id="all-reviews-list" class="reviews-list"></div>
+  </div>
+</div>
+
+<!-- ───────────── MODAL: ADD GAME ───────────── -->
+<div class="modal-overlay" id="add-game-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-game-modal')">✕</button>
+    <div class="modal-title">Añadir Juego</div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="new-game-title" placeholder="Ej: Elden Ring">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Género</label>
+      <select class="form-input" id="new-game-genre">
+        <option>RPG</option><option>Acción</option><option>Aventura</option>
+        <option>Estrategia</option><option>Deportes</option><option>Terror</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Año</label>
+      <input class="form-input" id="new-game-year" type="number" placeholder="2024">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nota Metacritic (0-100)</label>
+      <input class="form-input" id="new-game-meta" type="number" min="0" max="100" placeholder="85">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Plataformas (separadas por coma)</label>
+      <input class="form-input" id="new-game-platforms" placeholder="PS5, PC, Xbox">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-textarea" id="new-game-desc" placeholder="Breve descripción del juego..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emoji / Ícono</label>
+      <input class="form-input" id="new-game-emoji" placeholder="🎮" maxlength="4">
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="addGame()">Añadir al Catálogo</button>
+  </div>
+</div>
+
+<!-- ───────────── MODAL: ADD REVIEW ───────────── -->
+<div class="modal-overlay" id="add-review-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-review-modal')">✕</button>
+    <div class="modal-title">Escribir Reseña</div>
+    <div class="form-group">
+      <label class="form-label">Juego</label>
+      <select class="form-input" id="review-game-select"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu nombre</label>
+      <input class="form-input" id="review-author" placeholder="Gamer123">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Puntuación</label>
+      <div class="star-picker" id="star-picker">
+        <span class="star-pick" onclick="setStars(1)">★</span>
+        <span class="star-pick" onclick="setStars(2)">★</span>
+        <span class="star-pick" onclick="setStars(3)">★</span>
+        <span class="star-pick" onclick="setStars(4)">★</span>
+        <span class="star-pick" onclick="setStars(5)">★</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Reseña</label>
+      <textarea class="form-textarea" id="review-text" placeholder="Escribe tu opinión sobre el juego..."></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="addReview()">Publicar Reseña</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+let games = [
+  {
+    id: 1, title: "Elden Ring", genre: "RPG", year: 2022, meta: 96,
+    platforms: ["PS5", "PC", "Xbox"], emoji: "🪐",
+    desc: "Un vasto mundo abierto de fantasía oscura creado por FromSoftware y George R.R. Martin. Un desafío monumental con una narrativa críptica y combate exigente.",
+    reviews: [
+      { author: "SoulKeeper", stars: 5, text: "La obra maestra absoluta de la generación. Nunca pensé que un open world podría sentirse tan cohesionado.", date: "12/03/2024" },
+      { author: "CasualGamer99", stars: 3, text: "Muy difícil para mi gusto, pero visualmente impresionante. El mundo tiene una profundidad increíble.", date: "05/04/2024" }
+    ]
+  },
+  {
+    id: 2, title: "Baldur's Gate 3", genre: "RPG", year: 2023, meta: 97,
+    platforms: ["PC", "PS5"], emoji: "🧙",
+    desc: "El RPG definitivo de rol por turnos. Larian Studios lleva el género a nuevas alturas con libertad total, narrativa reactiva y multijugador cooperativo.",
+    reviews: [
+      { author: "TabletopFan", stars: 5, text: "500 horas y sigo descubriendo cosas nuevas. Simplemente impresionante.", date: "20/02/2024" }
+    ]
+  },
+  {
+    id: 3, title: "God of War Ragnarök", genre: "Acción", year: 2022, meta: 94,
+    platforms: ["PS5", "PS4", "PC"], emoji: "⚡",
+    desc: "Kratos y Atreus emprenden un viaje épico por los nueve reinos de la mitología nórdica. Una secuela que supera en todos los aspectos a su predecesora.",
+    reviews: [
+      { author: "NorseGod", stars: 5, text: "La historia de Kratos y Atreus me llegó al alma. Narración cinematográfica impecable.", date: "01/05/2024" },
+      { author: "ActionFan", stars: 4, text: "Combate brutal y satisfactorio. Algún tramo de historia se alarga, pero vale la pena.", date: "15/05/2024" }
+    ]
+  },
+  {
+    id: 4, title: "Hades II", genre: "Acción", year: 2024, meta: 93,
+    platforms: ["PC"], emoji: "🔱",
+    desc: "La esperada secuela del roguelike de Supergiant Games. Melinoe desciende al inframundo con mecánicas refinadas y una narrativa aún más profunda.",
+    reviews: []
+  },
+  {
+    id: 5, title: "Civilization VII", genre: "Estrategia", year: 2025, meta: 82,
+    platforms: ["PC", "PS5", "Xbox", "Switch"], emoji: "🌍",
+    desc: "La séptima entrega de la legendaria saga de estrategia por turnos. Nuevas eras, civilizaciones renovadas y una nueva forma de entender la historia.",
+    reviews: [
+      { author: "StrategyKing", stars: 4, text: "Las eras son un cambio de paradigma. Me costó adaptarme pero luego no podía parar.", date: "10/02/2025" }
+    ]
+  },
+  {
+    id: 6, title: "Hollow Knight: Silksong", genre: "Aventura", year: 2025, meta: 91,
+    platforms: ["PC", "Switch", "PS5", "Xbox"], emoji: "🕷️",
+    desc: "La tan esperada secuela del aclamado metroidvania. Hornet protagoniza una nueva aventura llena de combate ágil, exploración y un mundo rebosante de lore.",
+    reviews: []
+  }
+];
+
+let currentFilter = 'all';
+let selectedStars = 0;
+let currentGameId = null;
+
+// ── INIT ──
+function init() {
+  renderGrid('trending-grid', games.slice(0, 3));
+  renderGrid('catalog-grid', games);
+  updateStats();
+  renderAllReviews();
+}
+
+function updateStats() {
+  document.getElementById('stat-games').textContent = games.length;
+  const totalReviews = games.reduce((s, g) => s + g.reviews.length, 0);
+  document.getElementById('stat-reviews').textContent = totalReviews;
+  const authors = new Set();
+  games.forEach(g => g.reviews.forEach(r => authors.add(r.author)));
+  document.getElementById('stat-users').textContent = authors.size;
+}
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const navMap = { home: 0, catalog: 1, 'reviews-page': 2 };
+  if (navMap[id] !== undefined)
+    document.querySelectorAll('.nav-btn')[navMap[id]].classList.add('active');
+
+  if (id === 'catalog') { filterGames(); }
+  if (id === 'reviews-page') { renderAllReviews(); }
+}
+
+// ── RENDER GRID ──
+function renderGrid(containerId, list) {
+  const container = document.getElementById(containerId);
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🎮</div><p>No se encontraron juegos</p></div>`;
+    return;
+  }
+  container.innerHTML = list.map(g => gameCardHTML(g)).join('');
+}
+
+function gameCardHTML(g) {
+  const scoreClass = g.meta >= 75 ? 'score-green' : g.meta >= 50 ? 'score-yellow' : 'score-red';
+  const avgStars = g.reviews.length
+    ? (g.reviews.reduce((s, r) => s + r.stars, 0) / g.reviews.length).toFixed(1) : '—';
+  const starsHTML = g.reviews.length
+    ? '★'.repeat(Math.round(parseFloat(avgStars))) : '';
+  const platforms = g.platforms.map(p => `<span class="platform-badge">${p}</span>`).join('');
+
+  return `
+    <div class="game-card" onclick="showGameDetail(${g.id})">
+      <div class="game-cover">
+        <div class="game-cover-bg" style="background:linear-gradient(135deg,${genreColor(g.genre)}22,#0a0a0f)">${g.emoji}</div>
+        <div class="score-badge ${scoreClass}">${g.meta}</div>
+        <div class="platform-badges">${platforms}</div>
+      </div>
+      <div class="game-info">
+        <div class="game-title">${g.title}</div>
+        <div class="game-meta">
+          <span>${g.year}</span>
+          <span class="game-genre">${g.genre}</span>
+        </div>
+        <div class="user-rating">
+          <span class="stars">${starsHTML}</span>
+          <span class="review-count">${g.reviews.length > 0 ? `${avgStars} · ${g.reviews.length} reseña${g.reviews.length > 1 ? 's' : ''}` : 'Sin reseñas aún'}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function genreColor(genre) {
+  const map = { RPG: '#7b2fff', Acción: '#ff3d6e', Aventura: '#00f5a0', Estrategia: '#ffd700', Deportes: '#00bfff', Terror: '#ff6b35' };
+  return map[genre] || '#888';
+}
+
+// ── GAME DETAIL ──
+function showGameDetail(id) {
+  currentGameId = id;
+  const g = games.find(x => x.id === id);
+  const scoreClass = g.meta >= 75 ? 'score-green' : g.meta >= 50 ? 'score-yellow' : 'score-red';
+  const avgStars = g.reviews.length
+    ? (g.reviews.reduce((s, r) => s + r.stars, 0) / g.reviews.length).toFixed(1) : '—';
+
+  const reviewsHTML = g.reviews.length
+    ? g.reviews.map(r => `
+      <div class="review-card">
+        <div class="review-header">
+          <span class="review-author">@${r.author}</span>
+          <div style="display:flex;gap:0.8rem;align-items:center">
+            <span class="stars" style="font-size:0.9rem">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+            <span class="review-date">${r.date}</span>
+          </div>
+        </div>
+        <p class="review-text">${r.text}</p>
+      </div>`).join('')
+    : `<div class="empty-state"><div class="icon">✍️</div><p>Sé el primero en reseñar este juego</p></div>`;
+
+  document.getElementById('game-detail').innerHTML = `
+    <button class="back-btn" onclick="showPage('catalog')">← Volver al catálogo</button>
+    <div class="detail-hero">
+      <div class="detail-cover" style="background:linear-gradient(135deg,${genreColor(g.genre)}33,#0a0a0f)">${g.emoji}</div>
+      <div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap">
+          <span class="game-genre">${g.genre}</span>
+          <span class="game-genre" style="color:var(--muted);border-color:var(--border);background:none">${g.year}</span>
+        </div>
+        <div class="detail-title">${g.title}</div>
+        <div class="detail-scores">
+          <div class="score-block">
+            <div class="score-num score-meta">${g.meta}</div>
+            <div class="score-label">Metacritic</div>
+          </div>
+          <div class="score-block">
+            <div class="score-num score-users">${avgStars}</div>
+            <div class="score-label">Nota usuarios</div>
+          </div>
+          <div class="score-block">
+            <div class="score-num" style="color:var(--accent2)">${g.reviews.length}</div>
+            <div class="score-label">Reseñas</div>
+          </div>
+        </div>
+        <div class="detail-platforms">
+          ${g.platforms.map(p => `<span class="detail-platform">${p}</span>`).join('')}
+        </div>
+        <p class="detail-desc">${g.desc}</p>
+        <button class="btn-primary" onclick="openReviewModalFor(${g.id})">✍️ Escribir Reseña</button>
+      </div>
+    </div>
+    <div class="reviews-section">
+      <div class="section-header">
+        <div class="section-title">Reseñas de <span>Usuarios</span></div>
+      </div>
+      <div class="reviews-list">${reviewsHTML}</div>
+    </div>`;
+
+  showPage('game-detail-page');
+}
+
+// ── FILTER & SEARCH ──
+function setFilter(btn, genre) {
+  currentFilter = genre;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterGames();
+}
+
+function filterGames() {
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const filtered = games.filter(g =>
+    (currentFilter === 'all' || g.genre === currentFilter) &&
+    g.title.toLowerCase().includes(q)
+  );
+  renderGrid('catalog-grid', filtered);
+}
+
+// ── ALL REVIEWS ──
+function renderAllReviews() {
+  const all = [];
+  games.forEach(g => g.reviews.forEach(r => all.push({ ...r, gameName: g.title, gameId: g.id })));
+  all.reverse();
+  const container = document.getElementById('all-reviews-list');
+  if (!all.length) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">✍️</div><p>Todavía no hay reseñas. ¡Sé el primero!</p></div>`;
+    return;
+  }
+  container.innerHTML = all.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <span class="review-author">@${r.author}</span>
+          <span style="color:var(--muted);font-size:0.85rem;margin-left:0.8rem">sobre <span style="color:var(--text);cursor:pointer" onclick="showGameDetail(${r.gameId})">${r.gameName}</span></span>
+        </div>
+        <div style="display:flex;gap:0.8rem;align-items:center">
+          <span class="stars" style="font-size:0.9rem">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+          <span class="review-date">${r.date}</span>
+        </div>
+      </div>
+      <p class="review-text">${r.text}</p>
+    </div>`).join('');
+}
+
+// ── MODALS ──
+function openModal(id) {
+  if (id === 'add-review-modal') {
+    const sel = document.getElementById('review-game-select');
+    sel.innerHTML = games.map(g => `<option value="${g.id}">${g.title}</option>`).join('');
+    if (currentGameId) sel.value = currentGameId;
+    selectedStars = 0;
+    updateStarPicker();
+  }
+  document.getElementById(id).classList.add('open');
+}
+
+function openReviewModalFor(gameId) {
+  currentGameId = gameId;
+  openModal('add-review-modal');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ── STARS ──
+function setStars(n) { selectedStars = n; updateStarPicker(); }
+function updateStarPicker() {
+  document.querySelectorAll('.star-pick').forEach((s, i) => {
+    s.classList.toggle('active', i < selectedStars);
+  });
+}
+
+// ── ADD GAME ──
+function addGame() {
+  const title = document.getElementById('new-game-title').value.trim();
+  const genre = document.getElementById('new-game-genre').value;
+  const year = parseInt(document.getElementById('new-game-year').value) || new Date().getFullYear();
+  const meta = parseInt(document.getElementById('new-game-meta').value) || 70;
+  const platforms = document.getElementById('new-game-platforms').value.split(',').map(s => s.trim()).filter(Boolean);
+  const desc = document.getElementById('new-game-desc').value.trim();
+  const emoji = document.getElementById('new-game-emoji').value.trim() || '🎮';
+
+  if (!title) { showToast('❌ El título es obligatorio'); return; }
+
+  games.push({ id: Date.now(), title, genre, year, meta, platforms: platforms.length ? platforms : ['PC'], emoji, desc, reviews: [] });
+
+  closeModal('add-game-modal');
+  ['new-game-title','new-game-year','new-game-meta','new-game-platforms','new-game-desc','new-game-emoji']
+    .forEach(id => document.getElementById(id).value = '');
+
+  updateStats();
+  renderGrid('trending-grid', games.slice(-3));
+  if (document.getElementById('catalog').classList.contains('active')) filterGames();
+  showToast('✅ Juego añadido al catálogo');
+}
+
+// ── ADD REVIEW ──
+function addReview() {
+  const gameId = parseInt(document.getElementById('review-game-select').value);
+  const author = document.getElementById('review-author').value.trim();
+  const text = document.getElementById('review-text').value.trim();
+
+  if (!author) { showToast('❌ Escribe tu nombre'); return; }
+  if (!selectedStars) { showToast('❌ Selecciona una puntuación'); return; }
+  if (!text) { showToast('❌ Escribe tu reseña'); return; }
+
+  const game = games.find(g => g.id === gameId);
+  const today = new Date().toLocaleDateString('es-ES');
+  game.reviews.push({ author, stars: selectedStars, text, date: today });
+
+  closeModal('add-review-modal');
+  document.getElementById('review-author').value = '';
+  document.getElementById('review-text').value = '';
+  selectedStars = 0; updateStarPicker();
+
+  updateStats();
+  if (currentGameId === gameId) showGameDetail(gameId);
+  if (document.getElementById('reviews-page').classList.contains('active')) renderAllReviews();
+  showToast('✅ Reseña publicada');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── BOOT ──
+init();
+</script>
+</body>
+</html>

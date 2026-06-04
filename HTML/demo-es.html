@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Prueba el prototipo funcional de GameBack directamente en tu navegador.">
+  <title>Demo · GameBack</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .demo-frame-wrap {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .demo-frame-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .demo-frame-inner h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .demo-frame-inner h2 span { color: var(--accent); }
+    .app-frame {
+      width: 100%;
+      height: 85vh;
+      min-height: 600px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .notice {
+      background: rgba(0,245,160,.07);
+      border: 1px solid rgba(0,245,160,.25);
+      border-radius: 6px;
+      padding: .8rem 1.2rem;
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .notice strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index-es.html" class="logo">GAME<span>BACK</span></a>
+  <nav aria-label="Navegación principal">
+    <a href="index-es.html" class="nav-link">Inicio</a>
+    <a href="features-es.html" class="nav-link">Características</a>
+    <a href="demo-es.html" class="nav-link active">Demo</a>
+    <a href="contact-es.html" class="nav-link">Contacto</a>
+  </nav>
+  <div class="header-right">
+    <a href="demo-es.html" class="lang-btn current">ES</a>
+    <a href="demo-en.html" class="lang-btn">EN</a>
+    <a href="contact-es.html" class="btn-primary">Contactar</a>
+  </div>
+</header>
+
+<main>
+<section class="hero" style="padding:3rem 2rem 2rem" aria-label="Demo interactiva">
+  <div class="hero-tag">◈ Prototipo v1.0 · Interactivo</div>
+  <h1><em>GAMEBACK</em> EN VIVO</h1>
+  <p>Explora el prototipo funcional completo. Busca juegos, lee reseñas, escribe la tuya y añade nuevos títulos al catálogo.</p>
+</section>
+
+<div class="demo-frame-wrap">
+  <div class="demo-frame-inner">
+    <div class="notice" role="note">
+      <span aria-hidden="true">ℹ️</span>
+      <span><strong>Nota:</strong> Esta es la aplicación completa ejecutándose en tu navegador. Los datos se guardan en memoria durante la sesión. Usa los botones del encabezado para navegar entre las secciones.</span>
+    </div>
+    <h2>◈ <span>GAMEBACK</span> · Prototipo Funcional</h2>
+    <!-- El iframe carga el prototipo autónomo desarrollado en el bloque anterior -->
+    <iframe
+      src="gameback-app.html"
+      class="app-frame"
+      title="Prototipo interactivo de GameBack"
+      aria-label="Aplicación GameBack: plataforma de reseñas de videojuegos"
+      loading="lazy"
+    ></iframe>
+  </div>
+</div>
+
+<!-- INSTRUCCIONES DE USO -->
+<section class="section" aria-labelledby="instructions-title">
+  <div class="section-tag">Guía rápida</div>
+  <h2 class="section-title" id="instructions-title">CÓMO USAR <em>LA DEMO</em></h2>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">📚</div>
+      <div class="feat-title">Explorar el catálogo</div>
+      <p class="feat-desc">Ve a la sección "Catálogo" y usa la barra de búsqueda o los botones de género para filtrar los juegos disponibles.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎮</div>
+      <div class="feat-title">Ver ficha de un juego</div>
+      <p class="feat-desc">Haz clic en cualquier tarjeta de juego para ver su ficha completa con nota de Metacritic, plataformas y reseñas.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">✍️</div>
+      <div class="feat-title">Escribir una reseña</div>
+      <p class="feat-desc">En la ficha de un juego o desde el menú "Reseñas", haz clic en "Escribir Reseña", elige estrellas y escribe tu opinión.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">➕</div>
+      <div class="feat-title">Añadir un juego</div>
+      <p class="feat-desc">Pulsa el botón "+ Añadir Juego" en la cabecera de la app para añadir un nuevo título al catálogo con toda su información.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">GAME<span>BACK</span></div>
+      <p>Plataforma de reseñas de videojuegos creada por y para la comunidad gamer.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index-es.html">Inicio</a></li>
+        <li><a href="features-es.html">Características</a></li>
+        <li><a href="demo-es.html">Demo</a></li>
+        <li><a href="contact-es.html">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Idioma</h4>
+      <ul>
+        <li><a href="demo-es.html">🇪🇸 Español</a></li>
+        <li><a href="demo-en.html">🇬🇧 English</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 GameBack · Proyecto educativo</span>
+    <span>Desarrollado con HTML, CSS &amp; JS puro</span>
+  </div>
+</footer>
+
+</body>
+</html>
