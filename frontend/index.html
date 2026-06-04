@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameBack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #00f5a0;
+    --accent2: #7b2fff;
+    --accent3: #ff3d6e;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,245,160,0.012) 2px, rgba(0,245,160,0.012) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 4px; color: var(--accent); text-shadow: 0 0 20px rgba(0,245,160,0.5); }
+  .logo span { color: var(--accent3); }
+
+  nav { display: flex; gap: 0.5rem; }
+
+  .nav-btn {
+    background: none; border: none; color: var(--muted);
+    font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 600;
+    letter-spacing: 1px; padding: 0.4rem 1rem; cursor: pointer;
+    border-radius: 4px; transition: all 0.2s; text-transform: uppercase;
+  }
+  .nav-btn:hover, .nav-btn.active { color: var(--accent); background: rgba(0,245,160,0.08); }
+
+  .header-actions { display: flex; gap: 0.8rem; align-items: center; }
+
+  .btn-primary {
+    background: var(--accent); color: var(--bg); border: none;
+    padding: 0.5rem 1.2rem; font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; font-size: 0.95rem; letter-spacing: 1px;
+    border-radius: 4px; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #00c97e; box-shadow: 0 0 20px rgba(0,245,160,0.4); }
+
+  .btn-ghost {
+    background: none; border: 1px solid var(--border); color: var(--text);
+    padding: 0.5rem 1.2rem; font-family: 'Rajdhani', sans-serif;
+    font-weight: 600; font-size: 0.95rem; letter-spacing: 1px;
+    border-radius: 4px; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .hero { position: relative; padding: 5rem 2rem 4rem; text-align: center; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(123,47,255,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; color: var(--accent); border: 1px solid var(--accent);
+    padding: 0.2rem 0.8rem; letter-spacing: 3px; margin-bottom: 1.5rem;
+  }
+
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 1; letter-spacing: 6px; }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p { margin: 1.5rem auto; max-width: 520px; color: var(--muted); font-size: 1.1rem; line-height: 1.6; }
+  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .stats-bar {
+    display: flex; justify-content: center; gap: 3rem; padding: 2rem;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    margin: 2rem 0; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  .section { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 3px; }
+  .section-title span { color: var(--accent); }
+
+  .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+
+  .game-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; cursor: pointer; transition: all 0.2s;
+  }
+  .game-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,245,160,0.1); }
+
+  .game-cover { position: relative; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+  .game-cover-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+
+  .score-badge {
+    position: absolute; top: 8px; right: 8px; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 4px;
+  }
+  .score-green { background: rgba(0,200,100,0.2); color: #00c864; border: 1px solid #00c864; }
+  .score-yellow { background: rgba(255,200,0,0.2); color: #ffc800; border: 1px solid #ffc800; }
+  .score-red { background: rgba(255,60,60,0.2); color: #ff3c3c; border: 1px solid #ff3c3c; }
+
+  .platform-badges { position: absolute; bottom: 8px; left: 8px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .platform-badge { font-size: 0.6rem; background: rgba(0,0,0,0.6); border: 1px solid var(--border); padding: 0.1rem 0.4rem; border-radius: 3px; }
+
+  .game-info { padding: 0.8rem; }
+  .game-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .game-meta { display: flex; gap: 0.5rem; align-items: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .game-genre { font-size: 0.7rem; background: rgba(123,47,255,0.15); color: var(--accent2); border: 1px solid rgba(123,47,255,0.3); padding: 0.1rem 0.5rem; border-radius: 3px; }
+  .user-rating { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+  .stars { color: var(--gold); }
+  .review-count { color: var(--muted); font-size: 0.75rem; }
+
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .filter-tab {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .filter-tab:hover, .filter-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,245,160,0.08); }
+
+  .search-section { max-width: 700px; margin: 3rem auto 2rem; padding: 0 1rem; }
+  .search-wrap { position: relative; display: flex; gap: 0.5rem; }
+  .search-wrap input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.8rem 1.2rem; color: var(--text);
+    font-family: 'Rajdhani', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .detail-hero { display: grid; grid-template-columns: 200px 1fr; gap: 2rem; margin-bottom: 2rem; }
+  .detail-cover { height: 280px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 6rem; border: 1px solid var(--border); }
+  .detail-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 3px; margin-bottom: 1rem; }
+  .detail-scores { display: flex; gap: 1.5rem; margin-bottom: 1rem; }
+  .score-block { text-align: center; }
+  .score-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; }
+  .score-meta { color: #00c864; }
+  .score-users { color: var(--gold); }
+  .score-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .detail-platforms { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .detail-platform { font-size: 0.8rem; background: rgba(0,245,160,0.08); border: 1px solid rgba(0,245,160,0.2); color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 4px; }
+  .detail-desc { color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+
+  .back-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer;
+    font-family: 'Rajdhani', sans-serif; margin-bottom: 1.5rem; transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .review-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; }
+  .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .review-author { font-weight: 700; color: var(--accent); }
+  .review-date { font-size: 0.8rem; color: var(--muted); }
+  .review-text { color: var(--muted); line-height: 1.5; font-size: 0.95rem; }
+  .reviews-section { margin-top: 2rem; }
+  .reviews-list { margin-top: 1rem; }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 2rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1.5rem; color: var(--accent); }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; letter-spacing: 1px; text-transform: uppercase; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.6rem 0.8rem; color: var(--text);
+    font-family: 'Rajdhani', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-group select option { background: var(--card); }
+  .modal-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+
+  .star-picker { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
+  .star-pick { font-size: 1.5rem; cursor: pointer; color: var(--border); transition: color 0.1s; }
+  .star-pick.active, .star-pick:hover { color: var(--gold); }
+
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--card); border: 1px solid var(--accent); color: var(--accent);
+    padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600;
+    transition: transform 0.3s; z-index: 300; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  /* AUTH */
+  .auth-container { max-width: 420px; margin: 4rem auto; padding: 2rem; }
+  .auth-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+  .auth-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: 1.5rem; letter-spacing: 2px; }
+  .auth-switch { text-align: center; margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
+  .auth-switch span { color: var(--accent); cursor: pointer; }
+  .user-info { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+  .user-badge { background: rgba(0,245,160,0.1); border: 1px solid var(--accent); color: var(--accent); padding: 0.2rem 0.8rem; border-radius: 4px; font-size: 0.85rem; }
+
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GAME<span>BACK</span></div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('home')">Inicio</button>
+    <button class="nav-btn" onclick="showPage('catalog')">Catálogo</button>
+    <button class="nav-btn" onclick="showPage('reviews-page')">Reseñas</button>
+  </nav>
+  <div class="header-actions">
+    <div id="user-area">
+      <button class="btn-ghost" onclick="showPage('auth-page')">Iniciar Sesión</button>
+    </div>
+    <button class="btn-primary" onclick="openModal('add-game-modal')">+ Añadir Juego</button>
+  </div>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">// TU BIBLIOTECA GAMER</div>
+    <h1>GAME<em>BACK</em></h1>
+    <p>Gestiona tu biblioteca, registra tu progreso y descubre reseñas reales de jugadores.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="showPage('catalog')">Explorar Catálogo</button>
+      <button class="btn-ghost" onclick="showPage('reviews-page')">Ver Reseñas</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="stat-juegos">0</div><div class="stat-label">Juegos</div></div>
+    <div class="stat"><div class="stat-num" id="stat-resenas">0</div><div class="stat-label">Reseñas</div></div>
+    <div class="stat"><div class="stat-num" id="stat-usuarios">0</div><div class="stat-label">Usuarios</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header"><div class="section-title">Últimos <span>Añadidos</span></div></div>
+    <div class="games-grid" id="trending-grid"></div>
+  </div>
+</div>
+
+<!-- CATALOG -->
+<div id="catalog" class="page">
+  <div class="search-section">
+    <div class="search-wrap">
+      <input type="text" id="search-input" placeholder="Buscar juegos..." oninput="filterGames()">
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header"><div class="section-title">Catálogo <span>Completo</span></div></div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter(this,'all')">Todos</button>
+      <button class="filter-tab" onclick="setFilter(this,'RPG')">RPG</button>
+      <button class="filter-tab" onclick="setFilter(this,'Acción')">Acción</button>
+      <button class="filter-tab" onclick="setFilter(this,'Aventura')">Aventura</button>
+      <button class="filter-tab" onclick="setFilter(this,'Estrategia')">Estrategia</button>
+      <button class="filter-tab" onclick="setFilter(this,'Deportes')">Deportes</button>
+      <button class="filter-tab" onclick="setFilter(this,'Terror')">Terror</button>
+    </div>
+    <div class="games-grid" id="catalog-grid"></div>
+  </div>
+</div>
+
+<!-- GAME DETAIL -->
+<div id="game-detail-page" class="page">
+  <div class="section" id="game-detail"></div>
+</div>
+
+<!-- REVIEWS -->
+<div id="reviews-page" class="page">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Reseñas <span>Globales</span></div>
+      <button class="btn-primary" onclick="openModal('add-review-modal')">+ Escribir Reseña</button>
+    </div>
+    <div id="all-reviews-list"></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-page" class="page">
+  <div class="auth-container">
+    <div class="auth-box">
+      <div id="login-form">
+        <h2>Iniciar Sesión</h2>
+        <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="tu@email.com"></div>
+        <div class="form-group"><label>Contraseña</label><input type="password" id="login-password" placeholder="••••••••"></div>
+        <button class="btn-primary" style="width:100%" onclick="login()">Entrar</button>
+        <div class="auth-switch">¿No tienes cuenta? <span onclick="toggleAuth()">Regístrate</span></div>
+      </div>
+      <div id="register-form" style="display:none">
+        <h2>Registro</h2>
+        <div class="form-group"><label>Nombre</label><input type="text" id="reg-nombre" placeholder="Tu nombre"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="tu@email.com"></div>
+        <div class="form-group"><label>Contraseña</label><input type="password" id="reg-password" placeholder="••••••••"></div>
+        <button class="btn-primary" style="width:100%" onclick="register()">Crear cuenta</button>
+        <div class="auth-switch">¿Ya tienes cuenta? <span onclick="toggleAuth()">Inicia sesión</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AÑADIR JUEGO -->
+<div class="modal-overlay" id="add-game-modal">
+  <div class="modal">
+    <h2>Añadir Juego</h2>
+    <div class="form-group"><label>Título *</label><input type="text" id="new-game-title" placeholder="Nombre del juego"></div>
+    <div class="form-group"><label>Género *</label>
+      <select id="new-game-genre">
+        <option>RPG</option><option>Acción</option><option>Aventura</option>
+        <option>Estrategia</option><option>Deportes</option><option>Terror</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Año</label><input type="number" id="new-game-year" placeholder="2024"></div>
+    <div class="form-group"><label>Nota Metacritic (0-100)</label><input type="number" id="new-game-meta" placeholder="70" min="0" max="100"></div>
+    <div class="form-group"><label>Plataformas (separadas por coma)</label><input type="text" id="new-game-platforms" placeholder="PC, PS5, Xbox"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="new-game-desc" placeholder="Descripción del juego..."></textarea></div>
+    <div class="form-group"><label>Emoji / Icono</label><input type="text" id="new-game-emoji" placeholder="🎮"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="addGame()">Añadir al Catálogo</button>
+      <button class="btn-ghost" onclick="closeModal('add-game-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR JUEGO -->
+<div class="modal-overlay" id="edit-game-modal">
+  <div class="modal">
+    <h2>Editar Juego</h2>
+    <input type="hidden" id="edit-game-id">
+    <div class="form-group"><label>Título *</label><input type="text" id="edit-game-title"></div>
+    <div class="form-group"><label>Género *</label>
+      <select id="edit-game-genre">
+        <option>RPG</option><option>Acción</option><option>Aventura</option>
+        <option>Estrategia</option><option>Deportes</option><option>Terror</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Año</label><input type="number" id="edit-game-year"></div>
+    <div class="form-group"><label>Nota Metacritic</label><input type="number" id="edit-game-meta" min="0" max="100"></div>
+    <div class="form-group"><label>Plataformas</label><input type="text" id="edit-game-platforms"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="edit-game-desc"></textarea></div>
+    <div class="form-group"><label>Emoji</label><input type="text" id="edit-game-emoji"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="editGame()">Guardar Cambios</button>
+      <button class="btn-ghost" onclick="closeModal('edit-game-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESEÑA -->
+<div class="modal-overlay" id="add-review-modal">
+  <div class="modal">
+    <h2>Escribir Reseña</h2>
+    <div class="form-group"><label>Juego</label>
+      <select id="review-game-select"></select>
+    </div>
+    <div class="form-group"><label>Tu nombre</label><input type="text" id="review-author" placeholder="@usuario"></div>
+    <div class="form-group"><label>Puntuación</label>
+      <div class="star-picker">
+        <span class="star-pick" onclick="setStars(1)">★</span>
+        <span class="star-pick" onclick="setStars(2)">★</span>
+        <span class="star-pick" onclick="setStars(3)">★</span>
+        <span class="star-pick" onclick="setStars(4)">★</span>
+        <span class="star-pick" onclick="setStars(5)">★</span>
+      </div>
+    </div>
+    <div class="form-group"><label>Reseña</label><textarea id="review-text" placeholder="Escribe tu opinión..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="addReview()">Publicar Reseña</button>
+      <button class="btn-ghost" onclick="closeModal('add-review-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const API = 'http://localhost:8080';
+  let games = [];
+  let currentFilter = 'all';
+  let currentGameId = null;
+  let selectedStars = 0;
+  let currentUser = null;
+
+  // ── INIT ──
+  async function init() {
+    await loadGames();
+    await updateStats();
+    renderGrid('trending-grid', games.slice(-4));
+  }
+
+  // ── CARGAR JUEGOS DESDE API ──
+  async function loadGames() {
+    try {
+      const res = await fetch(`${API}/juegos`);
+      games = await res.json();
+    } catch (e) {
+      showToast('❌ No se puede conectar con el servidor');
+    }
+  }
+
+  // ── STATS ──
+  async function updateStats() {
+    try {
+      const [juegosRes, resenasRes, usuariosRes] = await Promise.all([
+        fetch(`${API}/juegos`),
+        fetch(`${API}/resenas`),
+        fetch(`${API}/usuarios`)
+      ]);
+      const juegos = await juegosRes.json();
+      const resenas = await resenasRes.json();
+      const usuarios = await usuariosRes.json();
+      document.getElementById('stat-juegos').textContent = juegos.length;
+      document.getElementById('stat-resenas').textContent = resenas.length;
+      document.getElementById('stat-usuarios').textContent = usuarios.length;
+    } catch(e) {}
+  }
+
+  // ── NAVEGACIÓN ──
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const navMap = { home: 0, catalog: 1, 'reviews-page': 2 };
+    if (navMap[id] !== undefined) document.querySelectorAll('.nav-btn')[navMap[id]].classList.add('active');
+    if (id === 'catalog') filterGames();
+    if (id === 'reviews-page') renderAllReviews();
+    if (id === 'home') { loadGames().then(() => { renderGrid('trending-grid', games.slice(-4)); updateStats(); }); }
+  }
+
+  // ── RENDER GRID ──
+  function renderGrid(containerId, list) {
+    const container = document.getElementById(containerId);
+    if (!list.length) {
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🎮</div><p>No hay juegos todavía. ¡Añade el primero!</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(g => gameCardHTML(g)).join('');
+  }
+
+  function gameCardHTML(g) {
+    const scoreClass = g.nota_metacritic >= 75 ? 'score-green' : g.nota_metacritic >= 50 ? 'score-yellow' : 'score-red';
+    const plataformas = g.plataformas ? g.plataformas.split(',').map(p => `<span class="platform-badge">${p.trim()}</span>`).join('') : '';
+    return `
+      <div class="game-card" onclick="showGameDetail(${g.id})">
+        <div class="game-cover">
+          <div class="game-cover-bg" style="background:linear-gradient(135deg,${genreColor(g.genero)}22,#0a0a0f)">${g.emoji || '🎮'}</div>
+          <div class="score-badge ${scoreClass}">${g.nota_metacritic}</div>
+          <div class="platform-badges">${plataformas}</div>
+        </div>
+        <div class="game-info">
+          <div class="game-title">${g.titulo}</div>
+          <div class="game-meta"><span>${g.anio}</span><span class="game-genre">${g.genero}</span></div>
+        </div>
+      </div>`;
+  }
+
+  function genreColor(genre) {
+    const map = { RPG: '#7b2fff', 'Acción': '#ff3d6e', Aventura: '#00f5a0', Estrategia: '#ffd700', Deportes: '#00bfff', Terror: '#ff6b35' };
+    return map[genre] || '#888';
+  }
+
+  // ── GAME DETAIL ──
+  async function showGameDetail(id) {
+    currentGameId = id;
+    const g = games.find(x => x.id === id);
+    let resenas = [];
+    try {
+      const res = await fetch(`${API}/resenas/${id}`);
+      resenas = await res.json();
+    } catch(e) {}
+
+    const avgStars = resenas.length ? (resenas.reduce((s, r) => s + r.estrellas, 0) / resenas.length).toFixed(1) : '—';
+    const scoreClass = g.nota_metacritic >= 75 ? 'score-green' : g.nota_metacritic >= 50 ? 'score-yellow' : 'score-red';
+    const plataformas = g.plataformas ? g.plataformas.split(',').map(p => `<span class="detail-platform">${p.trim()}</span>`).join('') : '';
+
+    const reviewsHTML = resenas.length
+      ? resenas.map(r => `
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">@${r.autor}</span>
+            <div style="display:flex;gap:0.8rem;align-items:center">
+              <span class="stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</span>
+              <span class="review-date">${r.fecha}</span>
+              <button onclick="deleteReview(${r.id}, ${id})" style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:0.8rem;">✕</button>
+            </div>
+          </div>
+          <p class="review-text">${r.texto}</p>
+        </div>`).join('')
+      : `<div class="empty-state"><div class="icon">✍️</div><p>Sé el primero en reseñar este juego</p></div>`;
+
+    document.getElementById('game-detail').innerHTML = `
+      <button class="back-btn" onclick="showPage('catalog')">← Volver al catálogo</button>
+      <div class="detail-hero">
+        <div class="detail-cover" style="background:linear-gradient(135deg,${genreColor(g.genero)}33,#0a0a0f)">${g.emoji || '🎮'}</div>
+        <div>
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap">
+            <span class="game-genre">${g.genero}</span>
+            <span class="game-genre" style="color:var(--muted);border-color:var(--border);background:none">${g.anio}</span>
+          </div>
+          <div class="detail-title">${g.titulo}</div>
+          <div class="detail-scores">
+            <div class="score-block"><div class="score-num score-meta">${g.nota_metacritic}</div><div class="score-label">Metacritic</div></div>
+            <div class="score-block"><div class="score-num score-users">${avgStars}</div><div class="score-label">Usuarios</div></div>
+            <div class="score-block"><div class="score-num" style="color:var(--accent2)">${resenas.length}</div><div class="score-label">Reseñas</div></div>
+          </div>
+          <div class="detail-platforms">${plataformas}</div>
+          <p class="detail-desc">${g.descripcion || ''}</p>
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+            <button class="btn-primary" onclick="openReviewModalFor(${g.id})">✍️ Escribir Reseña</button>
+            <button class="btn-ghost" onclick="openEditModal(${g.id})">✏️ Editar</button>
+            <button class="btn-ghost" style="border-color:var(--accent3);color:var(--accent3)" onclick="deleteGame(${g.id})">🗑️ Eliminar</button>
+          </div>
+        </div>
+      </div>
+      <div class="reviews-section">
+        <div class="section-header"><div class="section-title">Reseñas de <span>Usuarios</span></div></div>
+        <div class="reviews-list">${reviewsHTML}</div>
+      </div>`;
+
+    showPage('game-detail-page');
+  }
+
+  // ── FILTER ──
+  function setFilter(btn, genre) {
+    currentFilter = genre;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterGames();
+  }
+
+  function filterGames() {
+    const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const filtered = games.filter(g =>
+      (currentFilter === 'all' || g.genero === currentFilter) &&
+      g.titulo.toLowerCase().includes(q)
+    );
+    renderGrid('catalog-grid', filtered);
+  }
+
+  // ── ALL REVIEWS ──
+  async function renderAllReviews() {
+    const container = document.getElementById('all-reviews-list');
+    try {
+      const res = await fetch(`${API}/resenas`);
+      const all = await res.json();
+      if (!all.length) {
+        container.innerHTML = `<div class="empty-state"><div class="icon">✍️</div><p>Todavía no hay reseñas. ¡Sé el primero!</p></div>`;
+        return;
+      }
+      container.innerHTML = all.map(r => `
+        <div class="review-card">
+          <div class="review-header">
+            <div>
+              <span class="review-author">@${r.autor}</span>
+              <span style="color:var(--muted);font-size:0.85rem;margin-left:0.8rem">sobre <span style="color:var(--text);cursor:pointer" onclick="showGameDetail(${r.id_juego})">${r.titulo_juego}</span></span>
+            </div>
+            <div style="display:flex;gap:0.8rem;align-items:center">
+              <span class="stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</span>
+              <span class="review-date">${r.fecha}</span>
+            </div>
+          </div>
+          <p class="review-text">${r.texto}</p>
+        </div>`).join('');
+    } catch(e) {
+      container.innerHTML = `<div class="empty-state"><div class="icon">❌</div><p>Error al cargar reseñas</p></div>`;
+    }
+  }
+
+  // ── MODALS ──
+  function openModal(id) {
+    if (id === 'add-review-modal') {
+      const sel = document.getElementById('review-game-select');
+      sel.innerHTML = games.map(g => `<option value="${g.id}">${g.titulo}</option>`).join('');
+      if (currentGameId) sel.value = currentGameId;
+      selectedStars = 0;
+      updateStarPicker();
+    }
+    document.getElementById(id).classList.add('open');
+  }
+
+  function openReviewModalFor(gameId) { currentGameId = gameId; openModal('add-review-modal'); }
+
+  function openEditModal(id) {
+    const g = games.find(x => x.id === id);
+    document.getElementById('edit-game-id').value = g.id;
+    document.getElementById('edit-game-title').value = g.titulo;
+    document.getElementById('edit-game-genre').value = g.genero;
+    document.getElementById('edit-game-year').value = g.anio;
+    document.getElementById('edit-game-meta').value = g.nota_metacritic;
+    document.getElementById('edit-game-platforms').value = g.plataformas || '';
+    document.getElementById('edit-game-desc').value = g.descripcion || '';
+    document.getElementById('edit-game-emoji').value = g.emoji || '🎮';
+    openModal('edit-game-modal');
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+  });
+
+  // ── STARS ──
+  function setStars(n) { selectedStars = n; updateStarPicker(); }
+  function updateStarPicker() {
+    document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('active', i < selectedStars));
+  }
+
+  // ── ADD GAME ──
+  async function addGame() {
+    const titulo = document.getElementById('new-game-title').value.trim();
+    if (!titulo) { showToast('❌ El título es obligatorio'); return; }
+
+    const juego = {
+      titulo,
+      genero: document.getElementById('new-game-genre').value,
+      anio: parseInt(document.getElementById('new-game-year').value) || new Date().getFullYear(),
+      nota_metacritic: parseInt(document.getElementById('new-game-meta').value) || 70,
+      plataformas: document.getElementById('new-game-platforms').value,
+      descripcion: document.getElementById('new-game-desc').value,
+      emoji: document.getElementById('new-game-emoji').value || '🎮'
+    };
+
+    try {
+      await fetch(`${API}/juegos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(juego) });
+      closeModal('add-game-modal');
+      document.getElementById('new-game-title').value = '';
+      await loadGames();
+      await updateStats();
+      renderGrid('trending-grid', games.slice(-4));
+      if (document.getElementById('catalog').classList.contains('active')) filterGames();
+      showToast('✅ Juego añadido correctamente');
+    } catch(e) {
+      showToast('❌ Error al añadir el juego');
+    }
+  }
+
+  // ── EDIT GAME ──
+  async function editGame() {
+    const id = document.getElementById('edit-game-id').value;
+    const juego = {
+      titulo: document.getElementById('edit-game-title').value.trim(),
+      genero: document.getElementById('edit-game-genre').value,
+      anio: parseInt(document.getElementById('edit-game-year').value) || new Date().getFullYear(),
+      nota_metacritic: parseInt(document.getElementById('edit-game-meta').value) || 70,
+      plataformas: document.getElementById('edit-game-platforms').value,
+      descripcion: document.getElementById('edit-game-desc').value,
+      emoji: document.getElementById('edit-game-emoji').value || '🎮'
+    };
+
+    try {
+      await fetch(`${API}/juegos/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(juego) });
+      closeModal('edit-game-modal');
+      await loadGames();
+      showGameDetail(parseInt(id));
+      showToast('✅ Juego actualizado correctamente');
+    } catch(e) {
+      showToast('❌ Error al editar el juego');
+    }
+  }
+
+  // ── DELETE GAME ──
+  async function deleteGame(id) {
+    if (!confirm('¿Seguro que quieres eliminar este juego?')) return;
+    try {
+      await fetch(`${API}/juegos/${id}`, { method: 'DELETE' });
+      await loadGames();
+      await updateStats();
+      showPage('catalog');
+      showToast('✅ Juego eliminado correctamente');
+    } catch(e) {
+      showToast('❌ Error al eliminar el juego');
+    }
+  }
+
+  // ── ADD REVIEW ──
+  async function addReview() {
+    const gameId = parseInt(document.getElementById('review-game-select').value);
+    const autor = document.getElementById('review-author').value.trim();
+    const texto = document.getElementById('review-text').value.trim();
+
+    if (!autor) { showToast('❌ Escribe tu nombre'); return; }
+    if (!selectedStars) { showToast('❌ Selecciona una puntuación'); return; }
+    if (!texto) { showToast('❌ Escribe tu reseña'); return; }
+
+    try {
+      await fetch(`${API}/resenas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_juego: gameId, autor, estrellas: selectedStars, texto })
+      });
+      closeModal('add-review-modal');
+      document.getElementById('review-author').value = '';
+      document.getElementById('review-text').value = '';
+      selectedStars = 0; updateStarPicker();
+      await updateStats();
+      if (currentGameId === gameId) showGameDetail(gameId);
+      if (document.getElementById('reviews-page').classList.contains('active')) renderAllReviews();
+      showToast('✅ Reseña publicada correctamente');
+    } catch(e) {
+      showToast('❌ Error al publicar la reseña');
+    }
+  }
+
+  // ── DELETE REVIEW ──
+  async function deleteReview(id, gameId) {
+    if (!confirm('¿Eliminar esta reseña?')) return;
+    try {
+      await fetch(`${API}/resenas/${id}`, { method: 'DELETE' });
+      await updateStats();
+      showGameDetail(gameId);
+      showToast('✅ Reseña eliminada');
+    } catch(e) {
+      showToast('❌ Error al eliminar la reseña');
+    }
+  }
+
+  // ── AUTH ──
+  function toggleAuth() {
+    document.getElementById('login-form').style.display = document.getElementById('login-form').style.display === 'none' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = document.getElementById('register-form').style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function register() {
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    if (!nombre || !email || !password) { showToast('❌ Rellena todos los campos'); return; }
+
+    try {
+      const res = await fetch(`${API}/usuarios/registro`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, password })
+      });
+      const data = await res.json();
+      if (res.ok) { showToast('✅ Cuenta creada. Ahora inicia sesión'); toggleAuth(); }
+      else { showToast(`❌ ${data.error}`); }
+    } catch(e) { showToast('❌ Error al registrarse'); }
+  }
+
+  async function login() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) { showToast('❌ Rellena todos los campos'); return; }
+
+    try {
+      const res = await fetch(`${API}/usuarios/login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        currentUser = data;
+        document.getElementById('user-area').innerHTML = `<div class="user-info"><span class="user-badge">👾 ${data.nombre}</span><button class="btn-ghost" onclick="logout()" style="font-size:0.8rem;padding:0.3rem 0.6rem">Salir</button></div>`;
+        showPage('home');
+        showToast(`✅ Bienvenido, ${data.nombre}`);
+        await updateStats();
+      } else { showToast(`❌ ${data.error}`); }
+    } catch(e) { showToast('❌ Error al iniciar sesión'); }
+  }
+
+  function logout() {
+    currentUser = null;
+    document.getElementById('user-area').innerHTML = `<button class="btn-ghost" onclick="showPage('auth-page')">Iniciar Sesión</button>`;
+    showToast('👋 Sesión cerrada');
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  init();
+</script>
+</body>
+</html>
