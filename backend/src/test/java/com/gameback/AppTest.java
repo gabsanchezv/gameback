@@ -122,19 +122,26 @@ public class AppTest {
     }
 
     // ── TEST 6: Se puede registrar un usuario ──
-    @Test
-    @Order(6)
-    void testRegistrarUsuario() throws Exception {
-        String sql = "INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)";
-        try (Connection conn = Database.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "Usuario Test");
-            ps.setString(2, "test@gameback.com");
-            ps.setString(3, "password123");
-            int rows = ps.executeUpdate();
-            assertEquals(1, rows, "Debe registrar exactamente 1 usuario");
-        }
+@Test
+@Order(6)
+void testRegistrarUsuario() throws Exception {
+    // Borramos el usuario si ya existe para evitar conflicto UNIQUE
+    try (Connection conn = Database.connect();
+         PreparedStatement ps = conn.prepareStatement("DELETE FROM usuarios WHERE email = ?")) {
+        ps.setString(1, "test@gameback.com");
+        ps.executeUpdate();
     }
+
+    String sql = "INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)";
+    try (Connection conn = Database.connect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, "Usuario Test");
+        ps.setString(2, "test@gameback.com");
+        ps.setString(3, "password123");
+        int rows = ps.executeUpdate();
+        assertEquals(1, rows, "Debe registrar exactamente 1 usuario");
+    }
+}
 
     // ── TEST 7: Login correcto ──
     @Test
